@@ -57,7 +57,7 @@ jobs:
         run: "composer install --no-interaction --no-progress --no-suggest"
 
       - name: "Install tools"
-        run: "phive install --trust-gpg-keys CF1A108D0E7AE720"
+        run: "phive install --trust-gpg-keys E82B2FB314E9906E"
 
       - name: "Static Analyze"
         run: "composer static:analyze"
