@@ -10,7 +10,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
-final class ToAeonDateTimeRector extends AbstractRector
+final class DateTimeToAeonDateTimeRector extends AbstractRector
 {
     /**
      * @return string[]
