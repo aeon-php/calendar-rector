@@ -4,15 +4,16 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\AddSubMethodCallRect
 
 use Aeon\Calendar\Rector\DateTimeImmutable\AddSubMethodCallRector;
 use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class AddSubMethodCallRectorTest  extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
      */
-    public function test(string $file) : void
+    public function test(SmartFileInfo $fileInfo): void
     {
-        $this->doTestFile($file);
+        $this->doTestFileInfo($fileInfo);
     }
 
     public function provideData() : \Iterator

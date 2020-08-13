@@ -4,15 +4,16 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\ToAeonDateTimeRector
 
 use Aeon\Calendar\Rector\DateTimeImmutable\ToAeonDateTimeRector;
 use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class ToAeonDateTimeRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
      */
-    public function test(string $file) : void
+    public function test(SmartFileInfo $fileInfo): void
     {
-        $this->doTestFile($file);
+        $this->doTestFileInfo($fileInfo);
     }
 
     public function provideData() : \Iterator
