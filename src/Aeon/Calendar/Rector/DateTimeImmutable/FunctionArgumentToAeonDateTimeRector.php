@@ -28,6 +28,10 @@ final class FunctionArgumentToAeonDateTimeRector extends AbstractRector
         foreach ($node->params as $index => $param) {
             $type = $param->type;
 
+            if (!$type instanceof Node) {
+                continue;
+            }
+
             if ($this->isObjectTypes($type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
                 $param->type = new Node\Name\FullyQualified(DateTime::class);
 
