@@ -30,7 +30,7 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
         }
 
         if ($node->class->toString() !== \DateTimeImmutable::class && $node->class->toString() !== \DateTime::class) {
-            return null;
+            return $node;
         }
 
         // new \DateTimeImmutable();

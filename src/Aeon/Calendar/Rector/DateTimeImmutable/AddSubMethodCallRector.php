@@ -25,7 +25,7 @@ final class AddSubMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->var instanceof Node\Expr\Variable) {
+        if ($node->var instanceof Node\Expr\Variable || $node->var instanceof MethodCall) {
             if ($this->isObjectType($node, \DateTimeImmutable::class) || $this->isObjectType($node, DateTime::class)) {
                 if (\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
                     $node->args[0] = new Node\Expr\StaticCall(
