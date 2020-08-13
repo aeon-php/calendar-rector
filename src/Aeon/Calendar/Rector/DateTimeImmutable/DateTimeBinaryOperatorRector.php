@@ -28,7 +28,8 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
         $left = $node->left;
         $right = $node->right;
 
-        if ($left instanceof Node\Expr\Variable && $right instanceof Node\Expr\Variable) {
+        if (($left instanceof Node\Expr\Variable || $left instanceof Node\Expr\MethodCall)
+            && ($right instanceof Node\Expr\Variable || $right instanceof Node\Expr\MethodCall)) {
             if ($this->isObjectTypes($left, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class]) && $this->isObjectTypes($right, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])) {
                 if ($node instanceof BinaryOp\Smaller) {
                     return $this->createMethodCall($left, 'isBefore', [$right]);
