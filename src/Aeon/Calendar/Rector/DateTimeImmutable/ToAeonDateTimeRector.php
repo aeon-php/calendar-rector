@@ -25,7 +25,7 @@ final class ToAeonDateTimeRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->class->toString() !== \DateTimeImmutable::class) {
+        if ($node->class->toString() !== \DateTimeImmutable::class && $node->class->toString() !== \DateTime::class) {
             return null;
         }
 
@@ -104,13 +104,13 @@ final class ToAeonDateTimeRector extends AbstractRector
     public function getDefinition() : RectorDefinition
     {
         return new RectorDefinition(
-            'Replace \DateTimeImmutable with Aeon DateTime GregorianCalendar',
+            'Replace creating instance \DateTimeImmutable with Aeon DateTime GregorianCalendar DateTime',
             [
                 new CodeSample(
                     // code before
                     'new \DateTimeImmutable();',
                     // code after
-                    'GregorianCalendar::systemDefault();'
+                    'GregorianCalendar::systemDefault()->now();'
                 ),
             ]
         );
