@@ -13,7 +13,7 @@ final class CreateFromMutableToAeonDateTimeRectorTest extends AbstractRectorTest
     /**
      * @dataProvider provideData()
      */
-    public function test(SmartFileInfo $fileInfo): void
+    public function test(SmartFileInfo $fileInfo) : void
     {
         $this->doTestFileInfo($fileInfo);
     }
