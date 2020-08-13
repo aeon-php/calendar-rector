@@ -13,6 +13,13 @@ function no_argument_function() : \DateTimeImmutable
 function first_argument_function(\DateTimeImmutable $dateTimeImmutable) : void
 {
 }
+
+\array_reduce(
+    [],
+    function (?\DateTimeImmutable $deliveryDate) : \DateTimeImmutable {
+        return $deliveryDate;
+    }
+);
 ?>
 -----
 <?php
@@ -30,4 +37,11 @@ function no_argument_function() : \Aeon\Calendar\Gregorian\DateTime
 function first_argument_function(\Aeon\Calendar\Gregorian\DateTime $dateTimeImmutable) : void
 {
 }
+
+\array_reduce(
+    [],
+    function (?\Aeon\Calendar\Gregorian\DateTime $deliveryDate) : \Aeon\Calendar\Gregorian\DateTime {
+        return $deliveryDate;
+    }
+);
 ?>

@@ -4,6 +4,7 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use Aeon\Calendar\Gregorian\DateTime;
 use PhpParser\Node;
+use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Stmt\Function_;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
@@ -16,7 +17,7 @@ final class FunctionArgumentToAeonDateTimeRector extends AbstractRector
      */
     public function getNodeTypes() : array
     {
-        return [Function_::class];
+        return [Function_::class, FunctionLike::class];
     }
 
     /**
@@ -25,15 +26,23 @@ final class FunctionArgumentToAeonDateTimeRector extends AbstractRector
     public function refactor(Node $node) : ?Node
     {
         foreach ($node->params as $index => $param) {
-            if ($param->type instanceof Node\Name\FullyQualified) {
-                if ($param->type->toString() === \DateTimeImmutable::class) {
-                    $param->type = new Node\Name\FullyQualified(DateTime::class);
+            $type = $param->type;
+
+            if ($this->isObjectTypes($type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+                $param->type = new Node\Name\FullyQualified(DateTime::class);
+
+                continue;
+            }
+
+            if ($type instanceof Node\NullableType) {
+                if ($this->isObjectTypes($type->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+                    $param->type->type = new Node\Name\FullyQualified(DateTime::class);
                 }
             }
         }
 
         if ($node->returnType instanceof Node\Name\FullyQualified) {
-            if ($node->returnType->toString() === \DateTimeImmutable::class) {
+            if ($this->isObjectTypes($node->returnType, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
                 $node->returnType = new Node\Name\FullyQualified(DateTime::class);
             }
         }

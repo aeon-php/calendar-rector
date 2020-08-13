@@ -27,12 +27,8 @@ final class ClassDateTimePropertyToAeonDateTimeRector  extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        $type = $node->type;
-
-        if ($type instanceof FullyQualified) {
-            if (\in_array($type->toString(), [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class], true)) {
-                $node->type = new FullyQualified(DateTime::class);
-            }
+        if ($this->isObjectTypes($node->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            $node->type = new FullyQualified(DateTime::class);
         }
 
         return $node;

@@ -24,15 +24,19 @@ final class MethodArgumentToAeonDateTimeRector extends AbstractRector
     public function refactor(Node $node) : ?Node
     {
         foreach ($node->params as $index => $param) {
-            if ($param->type instanceof Node\Name\FullyQualified) {
-                if ($param->type->toString() === \DateTimeImmutable::class) {
-                    $param->type = new Node\Name\FullyQualified(DateTime::class);
+            if ($this->isObjectTypes($param->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+                $param->type = new Node\Name\FullyQualified(DateTime::class);
+            }
+
+            if ($param->type instanceof Node\NullableType) {
+                if ($this->isObjectTypes($param->type->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+                    $param->type->type = new Node\Name\FullyQualified(DateTime::class);
                 }
             }
         }
 
         if ($node->returnType instanceof Node\Name\FullyQualified) {
-            if ($node->returnType->toString() === \DateTimeImmutable::class) {
+            if ($this->isObjectTypes($node->returnType, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
                 $node->returnType = new Node\Name\FullyQualified(DateTime::class);
             }
         }

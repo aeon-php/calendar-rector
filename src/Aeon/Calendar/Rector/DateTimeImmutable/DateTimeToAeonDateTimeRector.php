@@ -25,11 +25,7 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->class instanceof Node\Stmt\ClassLike) {
-            return $node;
-        }
-
-        if ($node->class->toString() !== \DateTimeImmutable::class && $node->class->toString() !== \DateTime::class) {
+        if (!$this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class])) {
             return $node;
         }
 
