@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\MethodArgumentToAeonDateTimeRector;
+declare(strict_types=1);
 
-use Aeon\Calendar\Rector\DateTimeImmutable\MethodArgumentToAeonDateTimeRector;
+namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\GetTimestampRector;
+
+use Aeon\Calendar\Rector\DateTimeImmutable\GetTimestampRector;
 use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-final class MethodArgumentToAeonDateTimeRectorTest  extends AbstractRectorTestCase
+final class GetTimestampRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -23,6 +25,6 @@ final class MethodArgumentToAeonDateTimeRectorTest  extends AbstractRectorTestCa
 
     protected function getRectorClass() : string
     {
-        return MethodArgumentToAeonDateTimeRector::class;
+        return GetTimestampRector::class;
     }
 }
