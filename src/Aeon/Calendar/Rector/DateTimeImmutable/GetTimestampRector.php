@@ -9,9 +9,12 @@ use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
 final class GetTimestampRector extends AbstractRector
 {
+    private static int $i = 0;
+
     /**
      * @return string[]
      */
@@ -25,16 +28,13 @@ final class GetTimestampRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->var instanceof Node\Expr\Variable || $node->var instanceof MethodCall) {
-            if ($this->isObjectTypes($node->var, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-                if (\mb_strtolower($node->name->toString()) === 'gettimestamp') {
-                    $this->addNodeBeforeNode(
-                        new MethodCall($node, 'inSeconds'),
-                        $node
-                    );
-
-                    $this->removeNode($node);
+        if ($this->isObjectTypes($node->var, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'gettimestamp') {
+                if ($node->getAttribute(AttributeKey::SCOPE) === null) {
+                    return null;
                 }
+
+                return $this->createMethodCall($node, 'inSeconds');
             }
         }
 

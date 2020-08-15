@@ -3,7 +3,8 @@
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\GetTimestampRector\Fixture;
 
 $dateTime = new \DateTimeImmutable();
-$dateTime->getTimestamp();
+$dateTime2 = new \DateTimeImmutable();
+$dateTime->getTimestamp() === $dateTime2->getTimestamp();
 
 ?>
 -----
@@ -12,6 +13,7 @@ $dateTime->getTimestamp();
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\GetTimestampRector\Fixture;
 
 $dateTime = new \DateTimeImmutable();
-$dateTime->getTimestamp()->inSeconds();
+$dateTime2 = new \DateTimeImmutable();
+$dateTime->getTimestamp()->inSeconds() === $dateTime2->getTimestamp()->inSeconds();
 
 ?>

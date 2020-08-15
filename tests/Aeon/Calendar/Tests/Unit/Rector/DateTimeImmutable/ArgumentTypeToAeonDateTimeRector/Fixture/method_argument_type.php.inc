@@ -1,14 +1,10 @@
 <?php
 
-namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\MethodArgumentToAeonDateTimeRector\Fixture;
+namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\ArgumentTypeToAeonDateTimeRector\Fixture;
 
 class SomeClass
 {
     public function __construct(\DateTimeImmutable $dateTimeImmutable, int $int, \DateTimeImmutable $dateTimeImmutable2)
-    {
-    }
-
-    public function noArguments() : \DateTimeImmutable
     {
     }
 
@@ -21,15 +17,11 @@ class SomeClass
 -----
 <?php
 
-namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\MethodArgumentToAeonDateTimeRector\Fixture;
+namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\ArgumentTypeToAeonDateTimeRector\Fixture;
 
 class SomeClass
 {
     public function __construct(\Aeon\Calendar\Gregorian\DateTime $dateTimeImmutable, int $int, \Aeon\Calendar\Gregorian\DateTime $dateTimeImmutable2)
-    {
-    }
-
-    public function noArguments() : \Aeon\Calendar\Gregorian\DateTime
     {
     }
 
