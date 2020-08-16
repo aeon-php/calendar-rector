@@ -2,11 +2,15 @@
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeToAeonDateTimeRector\Fixture;
 
-$func = function() {
-    return '2020-01-01 00:00:00';
-};
+/**
+ * @var array{date: string}
+ */
+$test = [
+];
 
-$dateTime = new \DateTimeImmutable($func(), new \DateTimeZone('Europe/Warsaw'));
+if (true === false) {
+    $dateTime = new \DateTimeImmutable($test['date'], new \DateTimeZone('Europe/Warsaw'));
+}
 
 ?>
 -----
@@ -14,10 +18,14 @@ $dateTime = new \DateTimeImmutable($func(), new \DateTimeZone('Europe/Warsaw'));
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeToAeonDateTimeRector\Fixture;
 
-$func = function() {
-    return '2020-01-01 00:00:00';
-};
+/**
+ * @var array{date: string}
+ */
+$test = [
+];
 
-$dateTime = \Aeon\Calendar\Gregorian\DateTime::fromString($func())->toTimeZone(new \DateTimeZone('Europe/Warsaw'));
+if (true === false) {
+    $dateTime = \Aeon\Calendar\Gregorian\DateTime::fromString($test['date'])->toTimeZone(new \DateTimeZone('Europe/Warsaw'));
+}
 
 ?>

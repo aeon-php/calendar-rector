@@ -45,8 +45,8 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
         $dateTimeArg = $node->args[0];
 
         if (\count($node->args) === 1) {
-            if ($this->isStringOrUnionStringOnlyType($dateTimeArg->value)) {
-                if (\mb_strtolower($this->getValue($dateTimeArg->value)) === 'now') {
+            if ($value = $this->getValue($dateTimeArg->value)) {
+                if ($value && \mb_strtolower($value) === 'now') {
                     $calendarNode = $this->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
 
                     return $this->createMethodCall($calendarNode, 'now', []);
@@ -58,8 +58,8 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
 
         $timezoneArg = $node->args[1];
 
-        if ($this->isStringOrUnionStringOnlyType($dateTimeArg->value)) {
-            if (\mb_strtolower($this->getValue($dateTimeArg->value)) === 'now') {
+        if ($value = $this->getValue($dateTimeArg->value)) {
+            if ($value && \mb_strtolower($value) === 'now') {
                 $calendarNode = new New_(
                     new FullyQualified(GregorianCalendar::class),
                     [
