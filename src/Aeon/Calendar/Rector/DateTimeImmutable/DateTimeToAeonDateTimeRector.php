@@ -28,7 +28,7 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
     public function refactor(Node $node) : ?Node
     {
         if (!$this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class])) {
-            return $node;
+            return null;
         }
 
         if ($node->getAttribute(AttributeKey::SCOPE) === null) {
@@ -42,32 +42,37 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
             return $this->createMethodCall($calendarNode, 'now', []);
         }
 
-        if (\count($node->args) === 1) {
-            if (\mb_strtolower($this->getValue($node->args[0]->value)) === 'now') {
-                $calendarNode = $this->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
+        $dateTimeArg = $node->args[0];
 
-                return $this->createMethodCall($calendarNode, 'now', []);
+        if (\count($node->args) === 1) {
+            if ($this->isStringOrUnionStringOnlyType($dateTimeArg->value)) {
+                if (\mb_strtolower($this->getValue($dateTimeArg->value)) === 'now') {
+                    $calendarNode = $this->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
+
+                    return $this->createMethodCall($calendarNode, 'now', []);
+                }
             }
 
             return $this->createStaticCall(DateTime::class, 'fromString', $node->args);
         }
 
-        $dateTimeArg = $node->args[0];
         $timezoneArg = $node->args[1];
 
-        if (\mb_strtolower($this->getValue($node->args[0]->value)) === 'now') {
-            $calendarNode = new New_(
-                new FullyQualified(GregorianCalendar::class),
-                [
-                    $timezoneArg,
-                ]
-            );
+        if ($this->isStringOrUnionStringOnlyType($dateTimeArg->value)) {
+            if (\mb_strtolower($this->getValue($dateTimeArg->value)) === 'now') {
+                $calendarNode = new New_(
+                    new FullyQualified(GregorianCalendar::class),
+                    [
+                        $timezoneArg,
+                    ]
+                );
 
-            return $this->createMethodCall($calendarNode, 'now', []);
+                return $this->createMethodCall($calendarNode, 'now', []);
+            }
         }
 
         $dateTime = $this->createStaticCall(DateTime::class, 'fromString', [
-            $dateTimeArg->value,
+            $dateTimeArg,
         ]);
 
         return $this->createMethodCall(
