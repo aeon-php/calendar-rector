@@ -1,6 +1,6 @@
 <?php
 
-namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\AddSubMethodCallRector\Fixture;
+namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\SetTimeMethodCallRector\_Fixture;
 
 $dateTime = new \DateTimeImmutable();
 $dateTime->sub(\DateInterval::createFromDateString('10 minutes'));
@@ -13,7 +13,7 @@ $dateTime->add(new \DateInterval('PT1H'));
 -----
 <?php
 
-namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\AddSubMethodCallRector\Fixture;
+namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\SetTimeMethodCallRector\_Fixture;
 
 $dateTime = new \DateTimeImmutable();
 $dateTime->sub(\Aeon\Calendar\TimeUnit::fromDateInterval(\DateInterval::createFromDateString('10 minutes')));

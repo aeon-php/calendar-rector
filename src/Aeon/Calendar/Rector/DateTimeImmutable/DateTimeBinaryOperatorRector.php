@@ -6,6 +6,9 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\Variable;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
@@ -28,9 +31,11 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
         $left = $node->left;
         $right = $node->right;
 
-        if (($left instanceof Node\Expr\Variable || $left instanceof Node\Expr\MethodCall)
-            && ($right instanceof Node\Expr\Variable || $right instanceof Node\Expr\MethodCall)) {
-            if ($this->isObjectTypes($left, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class]) && $this->isObjectTypes($right, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])) {
+        if (($left instanceof Variable || $left instanceof MethodCall || $left instanceof PropertyFetch)
+            && ($right instanceof Variable || $right instanceof MethodCall || $right instanceof PropertyFetch)) {
+            if ($this->isObjectTypes($left, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])
+                && $this->isObjectTypes($right, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])
+            ) {
                 if ($node instanceof BinaryOp\Smaller) {
                     return $this->createMethodCall($left, 'isBefore', [$right]);
                 }
