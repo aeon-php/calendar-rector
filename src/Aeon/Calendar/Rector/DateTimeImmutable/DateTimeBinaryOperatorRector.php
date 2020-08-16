@@ -52,6 +52,13 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
                     return $this->createMethodCall($left, 'isAfterOrEqual', [$right]);
                 }
 
+                if ($node instanceof BinaryOp\Spaceship) {
+                    $node->left = $this->createMethodCall($node->left, 'toDateTimeImmutable', []);
+                    $node->right = $this->createMethodCall($node->right, 'toDateTimeImmutable', []);
+
+                    return $node;
+                }
+
                 return $this->createMethodCall($left, 'isEqual', [$right]);
             }
         }

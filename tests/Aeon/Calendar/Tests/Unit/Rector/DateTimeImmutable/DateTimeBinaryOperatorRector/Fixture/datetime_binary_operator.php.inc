@@ -21,6 +21,10 @@ if ($left >= $right) {
     $result = 'after or equal';
 }
 
+if ($left <=> $right) {
+    $result = 'equal';
+}
+
 if ($left == $right) {
     $result = 'equal';
 }
@@ -48,6 +52,10 @@ if ($left->isBeforeOrEqual($right)) {
 
 if ($left->isAfterOrEqual($right)) {
     $result = 'after or equal';
+}
+
+if ($left->toDateTimeImmutable() <=> $right->toDateTimeImmutable()) {
+    $result = 'equal';
 }
 
 if ($left->isEqual($right)) {
