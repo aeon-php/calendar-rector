@@ -10,7 +10,6 @@ $dateTime = new \DateTimeImmutable('NOW', new \DateTimeZone('Europe/Warsaw'));
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeToAeonDateTimeRector\Fixture;
 
-$calendar = new \Aeon\Calendar\Gregorian\GregorianCalendar(new \Aeon\Calendar\Gregorian\TimeZone('Europe/Warsaw'));
-$dateTime = $calendar->now();
+$dateTime = (new \Aeon\Calendar\Gregorian\GregorianCalendar(new \DateTimeZone('Europe/Warsaw')))->now();
 
 ?>

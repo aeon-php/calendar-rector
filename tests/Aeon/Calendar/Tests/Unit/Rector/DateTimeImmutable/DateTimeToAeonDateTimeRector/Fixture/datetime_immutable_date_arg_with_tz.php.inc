@@ -10,6 +10,6 @@ $dateTime = new \DateTimeImmutable('2020-01-01 00:00:01', new \DateTimeZone('Eur
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeToAeonDateTimeRector\Fixture;
 
-$dateTime = \Aeon\Calendar\Gregorian\DateTime::fromString('2020-01-01 00:00:01')->toTimeZone(new \Aeon\Calendar\Gregorian\TimeZone('Europe/Warsaw'));
+$dateTime = \Aeon\Calendar\Gregorian\DateTime::fromString('2020-01-01 00:00:01')->toTimeZone(new \DateTimeZone('Europe/Warsaw'));
 
 ?>
