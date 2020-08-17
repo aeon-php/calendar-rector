@@ -14,6 +14,6 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\GetTimestampRector\F
 
 $dateTime = new \DateTimeImmutable();
 $dateTime2 = new \DateTimeImmutable();
-$dateTime->getTimestamp()->inSeconds() === $dateTime2->getTimestamp()->inSeconds();
+$dateTime->timestampUNIX()->inSeconds() === $dateTime2->timestampUNIX()->inSeconds();
 
 ?>

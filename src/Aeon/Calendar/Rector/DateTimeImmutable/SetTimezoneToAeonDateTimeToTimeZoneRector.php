@@ -2,7 +2,6 @@
 
 namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
-use Aeon\Calendar\Gregorian\TimeZone;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
@@ -24,19 +23,10 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\mb_strtolower($node->name->toString()) === 'settimezone') {
-                $node->name = new Node\Identifier('toTimeZone');
-                $node->args[0] = new Node\Expr\StaticCall(
-                    new Node\Name\FullyQualified(TimeZone::class),
-                    'fromDateTimeZone',
-                    [
-                        $node->args[0]->value,
-                    ]
-                );
+        if ($this->isDateTimeSetTimeZone($node)) {
+            $node->name = new Node\Identifier('toTimeZone');
 
-                return $node;
-            }
+            return $node;
         }
 
         return $node;
@@ -58,5 +48,30 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function isDateTimeSetTimeZone(MethodCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'settimezone') {
+                return true;
+            }
+        }
+
+        if (\mb_strtolower($node->name->toString()) !== 'settimezone') {
+            return false;
+        }
+
+        if (\count($node->args) !== 1) {
+            return false;
+        }
+
+        foreach ($node->args as $arg) {
+            if (!$this->isObjectType($arg->value, \DateTimeZone::class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

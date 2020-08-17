@@ -15,7 +15,7 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\GetTimestampRector\F
 
 function (\DateTimeInterface $dateTime)
 {
-    $dateTime->getTimestamp()->inSeconds();
+    $dateTime->timestampUNIX()->inSeconds();
 }
 
 ?>

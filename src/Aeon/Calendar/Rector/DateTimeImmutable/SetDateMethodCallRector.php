@@ -5,9 +5,14 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 use Aeon\Calendar\Gregorian\Day;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Type\IntegerType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
 final class SetDateMethodCallRector extends AbstractRector
 {
@@ -24,18 +29,22 @@ final class SetDateMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\mb_strtolower($node->name->toString()) === 'setdate') {
-                $node->args = [
-                    new Node\Expr\StaticCall(
-                        new Node\Name\FullyQualified(Day::class),
-                        'create',
-                        $node->args
-                    ),
-                ];
+        if ($node->getAttribute(AttributeKey::SCOPE) === null) {
+            return null;
+        }
 
-                return $node;
-            }
+        if ($this->isDateTimeSetDate($node)) {
+            $node->args = [
+                new StaticCall(
+                    new FullyQualified(Day::class),
+                    'create',
+                    $node->args
+                ),
+            ];
+
+            $node->name = new Identifier('setDay');
+
+            return $node;
         }
 
         return $node;
@@ -53,9 +62,34 @@ final class SetDateMethodCallRector extends AbstractRector
                     // code before
                     '$dateTime->setDate(1, 0, 0)',
                     // code after
-                    '$dateTime->setDate(new \Aeon\Calendar\Gregorian\Day(1, 0, 0));'
+                    '$dateTime->setDay(new \Aeon\Calendar\Gregorian\Day(1, 0, 0));'
                 ),
             ]
         );
+    }
+
+    private function isDateTimeSetDate(MethodCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'setdate') {
+                return true;
+            }
+        }
+
+        if (\mb_strtolower($node->name->toString()) !== 'setdate') {
+            return false;
+        }
+
+        if (\count($node->args) !== 3) {
+            return false;
+        }
+
+        foreach ($node->args as $arg) {
+            if (!$this->isStaticType($arg->value, IntegerType::class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

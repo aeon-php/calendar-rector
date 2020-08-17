@@ -28,14 +28,14 @@ final class GetTimestampRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node->var, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\mb_strtolower($node->name->toString()) === 'gettimestamp') {
-                if ($node->getAttribute(AttributeKey::SCOPE) === null) {
-                    return null;
-                }
+        if ($node->getAttribute(AttributeKey::SCOPE) === null) {
+            return null;
+        }
 
-                return $this->createMethodCall($node, 'inSeconds');
-            }
+        if ($this->isDateTimeGetTimestamp($node)) {
+            $node->name = new Node\Identifier('timestampUNIX');
+
+            return $this->createMethodCall($node, 'inSeconds');
         }
 
         return $node;
@@ -57,5 +57,24 @@ final class GetTimestampRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function isDateTimeGetTimestamp(MethodCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'gettimestamp') {
+                return true;
+            }
+        }
+
+        if (\mb_strtolower($node->name->toString()) !== 'gettimestamp') {
+            return false;
+        }
+
+        if (\count($node->args) !== 0) {
+            return false;
+        }
+
+        return true;
     }
 }

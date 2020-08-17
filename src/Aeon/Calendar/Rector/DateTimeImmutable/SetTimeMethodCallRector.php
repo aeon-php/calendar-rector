@@ -7,12 +7,21 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Type\IntegerType;
+use Rector\Core\Php\TypeAnalyzer;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 final class SetTimeMethodCallRector extends AbstractRector
 {
+    private TypeAnalyzer $typeAnalyzer;
+
+    public function __construct(TypeAnalyzer $typeAnalyzer)
+    {
+        $this->typeAnalyzer = $typeAnalyzer;
+    }
+
     /**
      * @return string[]
      */
@@ -26,17 +35,15 @@ final class SetTimeMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\mb_strtolower($node->name->toString()) === 'settime') {
-                $node->args = [
-                    new New_(
-                        new FullyQualified(Time::class),
-                        $node->args,
-                    ),
-                ];
+        if ($this->isDateTimeSetTime($node)) {
+            $node->args = [
+                new New_(
+                    new FullyQualified(Time::class),
+                    $node->args,
+                ),
+            ];
 
-                return $node;
-            }
+            return $node;
         }
 
         return $node;
@@ -58,5 +65,30 @@ final class SetTimeMethodCallRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function isDateTimeSetTime(MethodCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'settime') {
+                return true;
+            }
+        }
+
+        if (\mb_strtolower($node->name->toString()) !== 'settime') {
+            return false;
+        }
+
+        if (\count($node->args) < 2 || \count($node->args) > 4) {
+            return false;
+        }
+
+        foreach ($node->args as $arg) {
+            if (!$this->isStaticType($arg->value, IntegerType::class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

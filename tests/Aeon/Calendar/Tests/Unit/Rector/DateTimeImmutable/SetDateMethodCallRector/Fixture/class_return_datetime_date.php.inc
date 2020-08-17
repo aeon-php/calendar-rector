@@ -30,6 +30,6 @@ class Something
 
 $something = new Something();
 
-$something->date()->setDate(\Aeon\Calendar\Gregorian\Day::create(0, 0, 0));
+$something->date()->setDay(\Aeon\Calendar\Gregorian\Day::create(0, 0, 0));
 
 ?>

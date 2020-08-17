@@ -24,18 +24,16 @@ final class AddSubMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
-                $node->args[0] = new Node\Expr\StaticCall(
-                    new Node\Name\FullyQualified(TimeUnit::class),
-                    'fromDateInterval',
-                    [
-                        $node->args[0]->value,
-                    ]
-                );
+        if ($this->isDateAddSub($node)) {
+            $node->args[0] = new Node\Expr\StaticCall(
+                new Node\Name\FullyQualified(TimeUnit::class),
+                'fromDateInterval',
+                [
+                    $node->args[0]->value,
+                ]
+            );
 
-                return $node;
-            }
+            return $node;
         }
 
         return $node;
@@ -57,5 +55,30 @@ final class AddSubMethodCallRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function isDateAddSub(MethodCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
+                return true;
+            }
+        }
+
+        if (!\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
+            return false;
+        }
+
+        if (\count($node->args) !== 1) {
+            return false;
+        }
+
+        foreach ($node->args as $arg) {
+            if (!$this->isStaticType($arg->value, \DateInterval::class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

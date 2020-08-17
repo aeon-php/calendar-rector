@@ -4,7 +4,6 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use Aeon\Calendar\Gregorian\DateTime;
 use PhpParser\Node;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
@@ -21,11 +20,11 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
     }
 
     /**
-     * @param MethodCall $node
+     * @param StaticCall $node
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class]) && $node->name->toString() === 'createFromMutable') {
+        if ($this->isDateTimeCreateFromMutable($node)) {
             return $this->createStaticCall(DateTime::class, 'fromDateTime', [$node->args[0]]);
         }
 
@@ -48,5 +47,30 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function isDateTimeCreateFromMutable(StaticCall $node) : bool
+    {
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'createfrommutable') {
+                return true;
+            }
+        }
+
+        if (\mb_strtolower($node->name->toString()) !== 'createfrommutable') {
+            return false;
+        }
+
+        if (\count($node->args) !== 1) {
+            return false;
+        }
+
+        foreach ($node->args as $arg) {
+            if (!$this->isObjectType($arg->value, \DateTime::class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

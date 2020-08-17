@@ -12,6 +12,6 @@ $dateTime->setTimezone(new \DateTimeZone('UTC'));
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\FunctionArgumentToAeonDateTimeRector\Fixture;
 
 $dateTime = new \DateTimeImmutable();
-$dateTime->toTimeZone(\Aeon\Calendar\Gregorian\TimeZone::fromDateTimeZone(new \DateTimeZone('UTC')));
+$dateTime->toTimeZone(new \DateTimeZone('UTC'));
 
 ?>
