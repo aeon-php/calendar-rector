@@ -4,9 +4,9 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\SetTimeMethodCallRec
 
 class Foo
 {
-    public function date() : \Aeon\Calendar\Gregorian\DateTime
+    public function date() : \DateTimeInterface
     {
-        return \Aeon\Calendar\Gregorian\DateTime::fromString('2020-01-01');
+        return \DateTimeImmutable('2020-01-01');
     }
 }
 
@@ -21,6 +21,8 @@ $array = [
 
 if (false === true) {
     \current($array)->date()->setTime(0, 0, 0, 0);
+    \current($array)->date()->setTime(0, 0);
+    (new \DateTimeImmutable())->setTime(new \Aeon\Calendar\Gregorian\Time(0, 0, 0, 0));
 }
 
 ?>
@@ -31,9 +33,9 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\SetTimeMethodCallRec
 
 class Foo
 {
-    public function date() : \Aeon\Calendar\Gregorian\DateTime
+    public function date() : \DateTimeInterface
     {
-        return \Aeon\Calendar\Gregorian\DateTime::fromString('2020-01-01');
+        return \DateTimeImmutable('2020-01-01');
     }
 }
 
@@ -48,6 +50,8 @@ $array = [
 
 if (false === true) {
     \current($array)->date()->setTime(new \Aeon\Calendar\Gregorian\Time(0, 0, 0, 0));
+    \current($array)->date()->setTime(new \Aeon\Calendar\Gregorian\Time(0, 0));
+    (new \DateTimeImmutable())->setTime(new \Aeon\Calendar\Gregorian\Time(0, 0, 0, 0));
 }
 
 ?>

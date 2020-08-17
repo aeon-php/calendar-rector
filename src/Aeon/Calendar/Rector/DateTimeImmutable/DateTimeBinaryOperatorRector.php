@@ -6,6 +6,7 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
@@ -27,6 +28,14 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
     {
         $left = $node->left;
         $right = $node->right;
+
+        if ($left instanceof MethodCall && $left->name->toString() === 'toDateTimeImmutable') {
+            return $node;
+        }
+
+        if ($right instanceof MethodCall && $right->name->toString() === 'toDateTimeImmutable') {
+            return $node;
+        }
 
         if ($this->isObjectTypes($left, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])
             && $this->isObjectTypes($right, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])

@@ -53,7 +53,7 @@ final class GetTimestampRector extends AbstractRector
                 // code before
                     '$dateTime->getTimestamp();',
                     // code after
-                    '$dateTime->getTimestamp()->inseconds();'
+                    '$dateTime->timestampUNIX()->inSeconds();'
                 ),
             ]
         );

@@ -71,6 +71,11 @@ final class SetTimeMethodCallRector extends AbstractRector
     {
         if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
             if (\mb_strtolower($node->name->toString()) === 'settime') {
+
+                if (\count($node->args) < 2 || \count($node->args) > 4) {
+                    return false;
+                }
+
                 return true;
             }
         }
