@@ -74,7 +74,7 @@ final class AddSubMethodCallRector extends AbstractRector
         }
 
         foreach ($node->args as $arg) {
-            if (!$this->isStaticType($arg->value, \DateInterval::class)) {
+            if (!$this->isObjectType($arg->value, \DateInterval::class)) {
                 return false;
             }
         }
