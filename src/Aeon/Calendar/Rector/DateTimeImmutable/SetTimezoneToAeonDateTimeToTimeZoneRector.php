@@ -24,20 +24,18 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->var instanceof Node\Expr\Variable || $node->var instanceof MethodCall) {
-            if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-                if (\mb_strtolower($node->name->toString()) === 'settimezone') {
-                    $node->name = new Node\Identifier('toTimeZone');
-                    $node->args[0] = new Node\Expr\StaticCall(
-                        new Node\Name\FullyQualified(TimeZone::class),
-                        'fromDateTimeZone',
-                        [
-                            $node->args[0]->value,
-                        ]
-                    );
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'settimezone') {
+                $node->name = new Node\Identifier('toTimeZone');
+                $node->args[0] = new Node\Expr\StaticCall(
+                    new Node\Name\FullyQualified(TimeZone::class),
+                    'fromDateTimeZone',
+                    [
+                        $node->args[0]->value,
+                    ]
+                );
 
-                    return $node;
-                }
+                return $node;
             }
         }
 

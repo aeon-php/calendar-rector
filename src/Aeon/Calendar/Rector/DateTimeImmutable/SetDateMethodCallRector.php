@@ -24,19 +24,17 @@ final class SetDateMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->var instanceof Node\Expr\Variable || $node->var instanceof MethodCall) {
-            if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-                if (\mb_strtolower($node->name->toString()) === 'setdate') {
-                    $node->args = [
-                        new Node\Expr\StaticCall(
-                            new Node\Name\FullyQualified(Day::class),
-                            'create',
-                            $node->args
-                        ),
-                    ];
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'setdate') {
+                $node->args = [
+                    new Node\Expr\StaticCall(
+                        new Node\Name\FullyQualified(Day::class),
+                        'create',
+                        $node->args
+                    ),
+                ];
 
-                    return $node;
-                }
+                return $node;
             }
         }
 

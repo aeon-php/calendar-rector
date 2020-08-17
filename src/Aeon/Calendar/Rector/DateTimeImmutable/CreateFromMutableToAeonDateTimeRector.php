@@ -25,10 +25,8 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node instanceof StaticCall) {
-            if ($this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class]) && $node->name->toString() === 'createFromMutable') {
-                return $this->createStaticCall(DateTime::class, 'fromDateTime', [$node->args[0]]);
-            }
+        if ($this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class]) && $node->name->toString() === 'createFromMutable') {
+            return $this->createStaticCall(DateTime::class, 'fromDateTime', [$node->args[0]]);
         }
 
         return $node;

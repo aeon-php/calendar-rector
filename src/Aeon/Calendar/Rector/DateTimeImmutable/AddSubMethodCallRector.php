@@ -24,19 +24,17 @@ final class AddSubMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->var instanceof Node\Expr\Variable || $node->var instanceof MethodCall) {
-            if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-                if (\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
-                    $node->args[0] = new Node\Expr\StaticCall(
-                        new Node\Name\FullyQualified(TimeUnit::class),
-                        'fromDateInterval',
-                        [
-                            $node->args[0]->value,
-                        ]
-                    );
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\in_array(\mb_strtolower($node->name->toString()), ['sub', 'add'], true)) {
+                $node->args[0] = new Node\Expr\StaticCall(
+                    new Node\Name\FullyQualified(TimeUnit::class),
+                    'fromDateInterval',
+                    [
+                        $node->args[0]->value,
+                    ]
+                );
 
-                    return $node;
-                }
+                return $node;
             }
         }
 
