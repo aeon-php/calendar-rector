@@ -51,18 +51,18 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
 
     private function isDateTimeCreateFromMutable(StaticCall $node) : bool
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
-            if (\mb_strtolower($node->name->toString()) === 'createfrommutable') {
-                return true;
-            }
-        }
-
         if (\mb_strtolower($node->name->toString()) !== 'createfrommutable') {
             return false;
         }
 
         if (\count($node->args) !== 1) {
             return false;
+        }
+
+        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (\mb_strtolower($node->name->toString()) === 'createfrommutable') {
+                return true;
+            }
         }
 
         foreach ($node->args as $arg) {

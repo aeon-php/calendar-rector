@@ -4,7 +4,7 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeBinaryOperat
 
 class ClassTest
 {
-    public function date() : \DateTimeImmutable
+    public function date() : ?\DateTimeImmutable
     {
         return new \DateTimeImmutable('2020-01-01');
     }
@@ -54,7 +54,7 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeBinaryOperat
 
 class ClassTest
 {
-    public function date() : \DateTimeImmutable
+    public function date() : ?\DateTimeImmutable
     {
         return new \DateTimeImmutable('2020-01-01');
     }

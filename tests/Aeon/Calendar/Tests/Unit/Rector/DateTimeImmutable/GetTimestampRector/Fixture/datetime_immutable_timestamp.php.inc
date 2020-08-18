@@ -6,7 +6,6 @@ $dateTime = new \DateTimeImmutable();
 $dateTime2 = new \DateTimeImmutable();
 $dateTime->getTimestamp() === $dateTime2->getTimestamp();
 
-
 ?>
 -----
 <?php
