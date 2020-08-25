@@ -30,11 +30,11 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
         $right = $node->right;
 
         if ($left instanceof MethodCall && $left->name->toString() === 'toDateTimeImmutable') {
-            return $node;
+            return null;
         }
 
         if ($right instanceof MethodCall && $right->name->toString() === 'toDateTimeImmutable') {
-            return $node;
+            return null;
         }
 
         if ($this->isObjectTypes($left, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class])
@@ -63,7 +63,9 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
                 return $node;
             }
 
-            return $this->createMethodCall($left, 'isEqual', [$right]);
+            if ($node instanceof BinaryOp\Equal) {
+                return $this->createMethodCall($left, 'isEqual', [$right]);
+            }
         }
 
         return $node;
