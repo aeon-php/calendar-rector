@@ -5,9 +5,10 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 use Aeon\Calendar\Gregorian\DateTime;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
 {
@@ -25,7 +26,7 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
     public function refactor(Node $node) : ?Node
     {
         if ($this->isDateTimeCreateFromMutable($node)) {
-            return $this->createStaticCall(DateTime::class, 'fromDateTime', [$node->args[0]]);
+            return $this->nodeFactory->createStaticCall(DateTime::class, 'fromDateTime', [$node->args[0]]);
         }
 
         return $node;
@@ -34,9 +35,9 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable add/sub method calls with Aeon GregorianCalendar DateTime add/sub',
             [
                 new CodeSample(
@@ -59,14 +60,14 @@ final class CreateFromMutableToAeonDateTimeRector extends AbstractRector
             return false;
         }
 
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+        if ($this->nodeTypeResolver->isObjectTypes($node, PHPDateTimeTypes::all())) {
             if (\mb_strtolower($node->name->toString()) === 'createfrommutable') {
                 return true;
             }
         }
 
         foreach ($node->args as $arg) {
-            if (!$this->isObjectType($arg->value, \DateTime::class)) {
+            if (!$this->nodeTypeResolver->isObjectType($arg->value, new ObjectType(\DateTime::class))) {
                 return false;
             }
         }

@@ -6,10 +6,11 @@ use Aeon\Calendar\Gregorian\TimeZone;
 use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class TimeZoneToAeonDateTimeZoneRector extends AbstractRector
 {
@@ -26,7 +27,7 @@ final class TimeZoneToAeonDateTimeZoneRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if (!$this->isObjectTypes($node->class, [\DateTimeZone::class])) {
+        if (!$this->nodeTypeResolver->isObjectType($node->class, new ObjectType(\DateTimeZone::class))) {
             return $node;
         }
 
@@ -43,9 +44,9 @@ final class TimeZoneToAeonDateTimeZoneRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace creating instance \DateTimeImmutable with Aeon DateTime GregorianCalendar DateTime',
             [
                 new CodeSample(

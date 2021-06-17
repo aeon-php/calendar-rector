@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aeon\Calendar\Rector\BeberleiAssert;
 
+use Aeon\Calendar\Rector\DateTimeImmutable\PHPDateTimeTypes;
 use Assert\Assertion;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class DateTimeAssertRector extends AbstractRector
 {
@@ -26,18 +28,18 @@ final class DateTimeAssertRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->isInObjectType($node->class, Assertion::class)) {
+        if ($this->nodeTypeResolver->isObjectType($node->class, new ObjectType(Assertion::class))) {
             $arguments = $node->args;
 
             if (\count($arguments) < 2) {
                 return $node;
             }
 
-            if (!$this->isObjectTypes($arguments[0]->value, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (!$this->nodeTypeResolver->isObjectTypes($arguments[0]->value, PHPDateTimeTypes::all())) {
                 return $node;
             }
 
-            if (!$this->isObjectTypes($arguments[1]->value, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if (!$this->nodeTypeResolver->isObjectTypes($arguments[1]->value, PHPDateTimeTypes::all())) {
                 return $node;
             }
 
@@ -45,24 +47,24 @@ final class DateTimeAssertRector extends AbstractRector
 
             switch ($node->name->toString()) {
                 case 'eq':
-                    $newArguments[] = $this->createMethodCall($arguments[0]->value, 'isEqual', [$arguments[1]->value]);
+                    $newArguments[] = $this->nodeFactory->createMethodCall($arguments[0]->value, 'isEqual', [$arguments[1]->value]);
 
                     break;
                 case 'greaterThan':
-                    $newArguments[] = $this->createMethodCall($arguments[0]->value, 'isAfter', [$arguments[1]->value]);
+                    $newArguments[] = $this->nodeFactory->createMethodCall($arguments[0]->value, 'isAfter', [$arguments[1]->value]);
 
                     break;
                 case 'greaterOrEqualThan':
-                    $newArguments[] = $this->createMethodCall($arguments[0]->value, 'isAfterOrEqual', [$arguments[1]->value]);
+                    $newArguments[] = $this->nodeFactory->createMethodCall($arguments[0]->value, 'isAfterOrEqual', [$arguments[1]->value]);
 
                     break;
                 case 'lessThan':
-                    $newArguments[] = $this->createMethodCall($arguments[0]->value, 'isBefore', [$arguments[1]->value]);
+                    $newArguments[] = $this->nodeFactory->createMethodCall($arguments[0]->value, 'isBefore', [$arguments[1]->value]);
 
                     break;
 
                 case 'lessThanOrEqualThan':
-                    $newArguments[] = $this->createMethodCall($arguments[0]->value, 'isBeforeOrEqual', [$arguments[1]->value]);
+                    $newArguments[] = $this->nodeFactory->createMethodCall($arguments[0]->value, 'isBeforeOrEqual', [$arguments[1]->value]);
 
                     break;
             }
@@ -84,9 +86,9 @@ final class DateTimeAssertRector extends AbstractRector
         return $node;
     }
 
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace datetime assertion with Assert::true',
             [
                 new CodeSample(

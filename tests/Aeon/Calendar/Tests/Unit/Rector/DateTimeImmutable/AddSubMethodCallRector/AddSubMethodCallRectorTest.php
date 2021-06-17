@@ -3,7 +3,7 @@
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\AddSubMethodCallRector;
 
 use Aeon\Calendar\Rector\DateTimeImmutable\AddSubMethodCallRector;
-use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class AddSubMethodCallRectorTest  extends AbstractRectorTestCase
@@ -19,6 +19,11 @@ final class AddSubMethodCallRectorTest  extends AbstractRectorTestCase
     public function provideData() : \Iterator
     {
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
+    }
+
+    public function provideConfigFilePath() : string
+    {
+        return __DIR__ . '/config.php';
     }
 
     protected function getRectorClass() : string

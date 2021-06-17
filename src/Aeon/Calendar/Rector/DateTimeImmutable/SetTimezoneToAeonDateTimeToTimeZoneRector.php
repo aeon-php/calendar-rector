@@ -4,9 +4,10 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
 {
@@ -35,9 +36,9 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable add/sub method calls with Aeon GregorianCalendar DateTime add/sub',
             [
                 new CodeSample(
@@ -52,7 +53,7 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
 
     private function isDateTimeSetTimeZone(MethodCall $node) : bool
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+        if ($this->nodeTypeResolver->isObjectTypes($node, PHPDateTimeTypes::all())) {
             if (\mb_strtolower($node->name->toString()) === 'settimezone') {
                 return true;
             }
@@ -67,7 +68,7 @@ final class SetTimezoneToAeonDateTimeToTimeZoneRector extends AbstractRector
         }
 
         foreach ($node->args as $arg) {
-            if (!$this->isObjectType($arg->value, \DateTimeZone::class)) {
+            if (!$this->isObjectType($arg->value, new ObjectType(\DateTimeZone::class))) {
                 return false;
             }
         }

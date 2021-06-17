@@ -9,8 +9,8 @@ use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Property;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ClassDateTimePropertyToAeonDateTimeRector  extends AbstractRector
 {
@@ -31,7 +31,7 @@ final class ClassDateTimePropertyToAeonDateTimeRector  extends AbstractRector
             return $node;
         }
 
-        if ($this->isObjectTypes($node->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+        if ($this->nodeTypeResolver->isObjectTypes($node->type, PHPDateTimeTypes::all())) {
             $node->type = new FullyQualified(DateTime::class);
         }
 
@@ -41,9 +41,9 @@ final class ClassDateTimePropertyToAeonDateTimeRector  extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable class properties types with Aeon GregorianCalendar DateTime',
             [
                 new CodeSample(

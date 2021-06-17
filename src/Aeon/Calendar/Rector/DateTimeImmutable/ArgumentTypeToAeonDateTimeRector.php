@@ -8,8 +8,8 @@ use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ArgumentTypeToAeonDateTimeRector extends AbstractRector
 {
@@ -31,12 +31,12 @@ final class ArgumentTypeToAeonDateTimeRector extends AbstractRector
                 continue;
             }
 
-            if ($this->isObjectTypes($param->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if ($this->nodeTypeResolver->isObjectTypes($param->type, PHPDateTimeTypes::all())) {
                 $param->type = new Node\Name\FullyQualified(DateTime::class);
             }
 
             if ($param->type instanceof Node\NullableType) {
-                if ($this->isObjectTypes($param->type->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+                if ($this->nodeTypeResolver->isObjectTypes($param->type->type, PHPDateTimeTypes::all())) {
                     $param->type->type = new Node\Name\FullyQualified(DateTime::class);
                 }
             }
@@ -48,9 +48,9 @@ final class ArgumentTypeToAeonDateTimeRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable method argument type to Aeon DateTime GregorianCalendar DateTime type',
             [
                 new CodeSample(

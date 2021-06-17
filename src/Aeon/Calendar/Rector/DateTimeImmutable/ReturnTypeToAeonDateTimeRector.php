@@ -8,8 +8,8 @@ use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ReturnTypeToAeonDateTimeRector extends AbstractRector
 {
@@ -27,13 +27,13 @@ final class ReturnTypeToAeonDateTimeRector extends AbstractRector
     public function refactor(Node $node) : ?Node
     {
         if ($node->returnType instanceof Node\Name\FullyQualified) {
-            if ($this->isObjectTypes($node->returnType, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if ($this->nodeTypeResolver->isObjectTypes($node->returnType, PHPDateTimeTypes::all())) {
                 $node->returnType = new Node\Name\FullyQualified(DateTime::class);
             }
         }
 
         if ($node->returnType instanceof Node\NullableType) {
-            if ($this->isObjectTypes($node->returnType->type, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+            if ($this->nodeTypeResolver->isObjectTypes($node->returnType->type, PHPDateTimeTypes::all())) {
                 $node->returnType->type = new Node\Name\FullyQualified(DateTime::class);
             }
         }
@@ -44,9 +44,9 @@ final class ReturnTypeToAeonDateTimeRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable method argument type to Aeon DateTime GregorianCalendar DateTime type',
             [
                 new CodeSample(

@@ -8,9 +8,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class DateTimeToAeonDateTimeRector extends AbstractRector
 {
@@ -27,7 +27,7 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        if (!$this->isObjectTypes($node->class, [\DateTimeImmutable::class, \DateTime::class])) {
+        if (!$this->nodeTypeResolver->isObjectTypes($node->class, PHPDateTimeTypes::all())) {
             return null;
         }
 
@@ -37,28 +37,28 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
 
         // new \DateTimeImmutable();
         if (!\count($node->args)) {
-            $calendarNode = $this->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
+            $calendarNode = $this->nodeFactory->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
 
-            return $this->createMethodCall($calendarNode, 'now', []);
+            return $this->nodeFactory->createMethodCall($calendarNode, 'now', []);
         }
 
         $dateTimeArg = $node->args[0];
 
         if (\count($node->args) === 1) {
-            if ($value = $this->getValue($dateTimeArg->value)) {
+            if ($value = $this->valueResolver->getValue($dateTimeArg->value)) {
                 if ($value && \mb_strtolower($value) === 'now') {
-                    $calendarNode = $this->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
+                    $calendarNode = $this->nodeFactory->createStaticCall(GregorianCalendar::class, 'systemDefault', []);
 
-                    return $this->createMethodCall($calendarNode, 'now', []);
+                    return $this->nodeFactory->createMethodCall($calendarNode, 'now', []);
                 }
             }
 
-            return $this->createStaticCall(DateTime::class, 'fromString', $node->args);
+            return $this->nodeFactory->createStaticCall(DateTime::class, 'fromString', $node->args);
         }
 
         $timezoneArg = $node->args[1];
 
-        if ($value = $this->getValue($dateTimeArg->value)) {
+        if ($value = $this->valueResolver->getValue($dateTimeArg->value)) {
             if ($value && \mb_strtolower($value) === 'now') {
                 $calendarNode = new New_(
                     new FullyQualified(GregorianCalendar::class),
@@ -67,15 +67,15 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
                     ]
                 );
 
-                return $this->createMethodCall($calendarNode, 'now', []);
+                return $this->nodeFactory->createMethodCall($calendarNode, 'now', []);
             }
         }
 
-        $dateTime = $this->createStaticCall(DateTime::class, 'fromString', [
+        $dateTime = $this->nodeFactory->createStaticCall(DateTime::class, 'fromString', [
             $dateTimeArg,
         ]);
 
-        return $this->createMethodCall(
+        return $this->nodeFactory->createMethodCall(
             $dateTime,
             'toTimeZone',
             [
@@ -87,9 +87,9 @@ final class DateTimeToAeonDateTimeRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace creating instance \DateTimeImmutable with Aeon DateTime GregorianCalendar DateTime',
             [
                 new CodeSample(

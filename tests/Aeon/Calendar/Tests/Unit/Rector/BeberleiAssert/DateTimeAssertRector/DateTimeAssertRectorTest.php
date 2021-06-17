@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Aeon\Calendar\Tests\Unit\Rector\BeberleiAssert\DateTimeAssertRector;
 
-use Aeon\Calendar\Rector\BeberleiAssert\DateTimeAssertRector;
-use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class DateTimeAssertRectorTest extends AbstractRectorTestCase
@@ -23,8 +22,8 @@ final class DateTimeAssertRectorTest extends AbstractRectorTestCase
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
-    protected function getRectorClass() : string
+    public function provideConfigFilePath() : string
     {
-        return DateTimeAssertRector::class;
+        return __DIR__ . '/config.php';
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\ClassDateTimePropertyToAeonDateTimeRector;
 
 use Aeon\Calendar\Rector\DateTimeImmutable\ClassDateTimePropertyToAeonDateTimeRector;
-use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class ClassDateTimePropertyToAeonDateTimeRectorTest extends AbstractRectorTestCase
@@ -21,6 +21,11 @@ final class ClassDateTimePropertyToAeonDateTimeRectorTest extends AbstractRector
     public function provideData() : \Iterator
     {
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
+    }
+
+    public function provideConfigFilePath() : string
+    {
+        return __DIR__ . '/config.php';
     }
 
     protected function getRectorClass() : string

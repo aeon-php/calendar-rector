@@ -10,8 +10,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\IntegerType;
 use Rector\Core\Php\TypeAnalyzer;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class SetTimeMethodCallRector extends AbstractRector
 {
@@ -52,9 +52,9 @@ final class SetTimeMethodCallRector extends AbstractRector
     /**
      * From this method documentation is generated.
      */
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             'Replace \DateTimeImmutable setTime method with Aeon GregorianCalendar Time',
             [
                 new CodeSample(
@@ -69,7 +69,7 @@ final class SetTimeMethodCallRector extends AbstractRector
 
     private function isDateTimeSetTime(MethodCall $node) : bool
     {
-        if ($this->isObjectTypes($node, [\DateTimeImmutable::class, \DateTime::class, \DateTimeInterface::class])) {
+        if ($this->nodeTypeResolver->isObjectTypes($node, PHPDateTimeTypes::all())) {
             if (\mb_strtolower($node->name->toString()) === 'settime') {
                 if (\count($node->args) < 2 || \count($node->args) > 4) {
                     return false;
@@ -88,7 +88,7 @@ final class SetTimeMethodCallRector extends AbstractRector
         }
 
         foreach ($node->args as $arg) {
-            if (!$this->isStaticType($arg->value, IntegerType::class)) {
+            if (!$this->nodeTypeResolver->isStaticType($arg->value, IntegerType::class)) {
                 return false;
             }
         }

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class DateTimeDiffRector extends AbstractRector
 {
@@ -27,14 +28,12 @@ final class DateTimeDiffRector extends AbstractRector
             return null;
         }
 
-        if ($this->isDateTimeDiffCall($node)) {
+        if ($this->isDateTimePropertyFetchOnDiffMethodCall($node)) {
             $node->var->name = new Node\Identifier('distanceUntil');
 
             switch ($node->name->toString()) {
                 case 'days':
-                    return $this->createMethodCall($node->var, 'inDaysAbs');
-
-                break;
+                    return $this->nodeFactory->createMethodCall($node->var, 'inDaysAbs');
 
                 default:
                     return null;
@@ -44,9 +43,9 @@ final class DateTimeDiffRector extends AbstractRector
         return $node;
     }
 
-    public function getDefinition() : RectorDefinition
+    public function getRuleDefinition() : RuleDefinition
     {
-        return new RectorDefinition(
+        return new RuleDefinition(
             '',
             [
                 new CodeSample(
@@ -59,20 +58,20 @@ final class DateTimeDiffRector extends AbstractRector
         );
     }
 
-    private function isDateTimeDiffCall(PropertyFetch $node) : bool
+    private function isDateTimePropertyFetchOnDiffMethodCall(PropertyFetch $node) : bool
     {
-        if (
-            !$this->isOnClassMethodCall($node->var, \DateTimeImmutable::class, 'diff')
-            && !$this->isOnClassMethodCall($node->var, \DateTimeInterface::class, 'diff')
-            && !$this->isOnClassMethodCall($node->var, \DateTime::class, 'diff')
-        ) {
-            return false;
+        if ($node->var instanceof MethodCall) {
+            if (!$this->nodeTypeResolver->isObjectTypes($node->var->var, PHPDateTimeTypes::all())) {
+                return false;
+            }
+
+            if (!\in_array(\strtolower($node->name->toString()), ['days', 'f', 's', 'i', 'h', 'd', 'm', 'y'], true)) {
+                return false;
+            }
+
+            return true;
         }
 
-        if (!\in_array($node->name->toString(), ['days', 'f', 's', 'i', 'h', 'd', 'm', 'y'], true)) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 }

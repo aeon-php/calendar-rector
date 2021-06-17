@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\TimeZoneToAeonDateTimeZoneRector;
 
-use Aeon\Calendar\Rector\DateTimeImmutable\TimeZoneToAeonDateTimeZoneRector;
-use Rector\Core\Testing\PHPUnit\AbstractRectorTestCase;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
 final class TimeZoneToAeonDateTimeZoneRectorTest extends AbstractRectorTestCase
@@ -23,8 +22,8 @@ final class TimeZoneToAeonDateTimeZoneRectorTest extends AbstractRectorTestCase
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
-    protected function getRectorClass() : string
+    public function provideConfigFilePath() : string
     {
-        return TimeZoneToAeonDateTimeZoneRector::class;
+        return __DIR__ . '/config.php';
     }
 }
