@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aeon\Calendar\Rector\BeberleiAssert;
 
+use Aeon\Calendar\Gregorian\Calendar;
 use Aeon\Calendar\Rector\DateTimeImmutable\PHPDateTimeTypes;
 use Assert\Assertion;
 use PhpParser\Node;
@@ -36,15 +37,7 @@ final class DateTimeAssertRector extends AbstractRector
                 return null;
             }
 
-            if ($arguments[0]->value instanceof ClassConstFetch || $arguments[1]->value instanceof ClassConstFetch) {
-                return null;
-            }
-
-            if (!$this->nodeTypeResolver->isObjectTypes($arguments[0]->value, PHPDateTimeTypes::all())) {
-                return null;
-            }
-
-            if (!$this->nodeTypeResolver->isObjectTypes($arguments[1]->value, PHPDateTimeTypes::all())) {
+            if (!$this->areComparableDateTimes($arguments[0]->value, $arguments[1]->value)) {
                 return null;
             }
 
@@ -104,5 +97,30 @@ final class DateTimeAssertRector extends AbstractRector
                 ),
             ]
         );
+    }
+
+    private function areComparableDateTimes(Node\Expr $valueArgument, Node\Expr $expectationArgument) : bool
+    {
+        if ($valueArgument instanceof ClassConstFetch || $expectationArgument instanceof ClassConstFetch) {
+            return false;
+        }
+
+        if ($valueArgument instanceof Node\Expr\MethodCall) {
+            if (!$this->isObjectType($valueArgument->var, new ObjectType(Calendar::class))) {
+                return false;
+            }
+        } elseif (!$this->nodeTypeResolver->isObjectTypes($valueArgument, PHPDateTimeTypes::all())) {
+            return false;
+        }
+
+        if ($expectationArgument instanceof Node\Expr\MethodCall) {
+            if (!$this->isObjectType($expectationArgument->var, new ObjectType(Calendar::class))) {
+                return false;
+            }
+        } elseif (!$this->nodeTypeResolver->isObjectTypes($expectationArgument, PHPDateTimeTypes::all())) {
+            return false;
+        }
+
+        return true;
     }
 }
