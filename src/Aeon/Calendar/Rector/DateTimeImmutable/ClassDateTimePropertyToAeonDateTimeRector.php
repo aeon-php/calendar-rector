@@ -35,6 +35,12 @@ final class ClassDateTimePropertyToAeonDateTimeRector  extends AbstractRector
             $node->type = new FullyQualified(DateTime::class);
         }
 
+        if ($node->type instanceof Node\NullableType) {
+            if ($this->nodeTypeResolver->isObjectTypes($node->type->type, PHPDateTimeTypes::all())) {
+                $node->type->type = new Node\Name\FullyQualified(DateTime::class);
+            }
+        }
+
         return $node;
     }
 

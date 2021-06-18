@@ -4,8 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b087b1a03885d2e6a0e9bc4bd1aa917",
-    "packages": [
+    "content-hash": "7668731295150d41634bb9b532a52fef",
+    "packages": [],
+    "packages-dev": [
         {
             "name": "aeon-php/calendar",
             "version": "1.0.0",
@@ -60,9 +61,7 @@
                 }
             ],
             "time": "2021-06-06T10:10:28+00:00"
-        }
-    ],
-    "packages-dev": [
+        },
         {
             "name": "beberlei/assert",
             "version": "v3.3.1",

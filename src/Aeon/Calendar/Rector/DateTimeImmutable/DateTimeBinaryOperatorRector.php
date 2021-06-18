@@ -6,6 +6,7 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -34,6 +35,10 @@ final class DateTimeBinaryOperatorRector extends AbstractRector
         }
 
         if ($right instanceof MethodCall && $right->name->toString() === 'toDateTimeImmutable') {
+            return null;
+        }
+
+        if ($left instanceof ClassConstFetch || $right instanceof ClassConstFetch) {
             return null;
         }
 

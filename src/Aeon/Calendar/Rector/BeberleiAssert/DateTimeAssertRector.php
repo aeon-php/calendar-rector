@@ -7,6 +7,7 @@ namespace Aeon\Calendar\Rector\BeberleiAssert;
 use Aeon\Calendar\Rector\DateTimeImmutable\PHPDateTimeTypes;
 use Assert\Assertion;
 use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
@@ -33,6 +34,10 @@ final class DateTimeAssertRector extends AbstractRector
 
             if (\count($arguments) < 2) {
                 return $node;
+            }
+
+            if ($arguments[0]->value instanceof ClassConstFetch || $arguments[1]->value instanceof ClassConstFetch) {
+                return null;
             }
 
             if (!$this->nodeTypeResolver->isObjectTypes($arguments[0]->value, PHPDateTimeTypes::all())) {

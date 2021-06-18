@@ -4,6 +4,8 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeBinaryOperat
 
 class ClassTest
 {
+    public const TEST = 1;
+
     public function date() : ?\DateTimeImmutable
     {
         return new \DateTimeImmutable('2020-01-01');
@@ -44,6 +46,10 @@ function test()
     if ($left == $right) {
         $result = 'equal';
     }
+
+    if ($left === ClassTest::TEST) {
+        $result = 'not true';
+    }
 }
 
 ?>
@@ -54,6 +60,8 @@ namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\DateTimeBinaryOperat
 
 class ClassTest
 {
+    public const TEST = 1;
+
     public function date() : ?\DateTimeImmutable
     {
         return new \DateTimeImmutable('2020-01-01');
@@ -93,6 +101,10 @@ function test()
 
     if ($left->isEqual($right)) {
         $result = 'equal';
+    }
+
+    if ($left === ClassTest::TEST) {
+        $result = 'not true';
     }
 }
 
