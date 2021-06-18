@@ -33,7 +33,7 @@ final class DateTimeAssertRector extends AbstractRector
             $arguments = $node->args;
 
             if (\count($arguments) < 2) {
-                return $node;
+                return null;
             }
 
             if ($arguments[0]->value instanceof ClassConstFetch || $arguments[1]->value instanceof ClassConstFetch) {
@@ -41,11 +41,11 @@ final class DateTimeAssertRector extends AbstractRector
             }
 
             if (!$this->nodeTypeResolver->isObjectTypes($arguments[0]->value, PHPDateTimeTypes::all())) {
-                return $node;
+                return null;
             }
 
             if (!$this->nodeTypeResolver->isObjectTypes($arguments[1]->value, PHPDateTimeTypes::all())) {
-                return $node;
+                return null;
             }
 
             $newArguments = [];
