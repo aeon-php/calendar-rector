@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aeon\Calendar\Rector\BeberleiAssert;
 
-use Aeon\Calendar\Gregorian\Calendar;
 use Aeon\Calendar\Rector\DateTimeImmutable\PHPDateTimeTypes;
 use Assert\Assertion;
 use PhpParser\Node;
@@ -105,19 +104,11 @@ final class DateTimeAssertRector extends AbstractRector
             return false;
         }
 
-        if ($valueArgument instanceof Node\Expr\MethodCall) {
-            if (!$this->isObjectType($valueArgument->var, new ObjectType(Calendar::class))) {
-                return false;
-            }
-        } elseif (!$this->nodeTypeResolver->isObjectTypes($valueArgument, PHPDateTimeTypes::all())) {
+        if ($valueArgument instanceof Node\Expr\MethodCall|| $expectationArgument instanceof Node\Expr\MethodCall) {
             return false;
         }
 
-        if ($expectationArgument instanceof Node\Expr\MethodCall) {
-            if (!$this->isObjectType($expectationArgument->var, new ObjectType(Calendar::class))) {
-                return false;
-            }
-        } elseif (!$this->nodeTypeResolver->isObjectTypes($expectationArgument, PHPDateTimeTypes::all())) {
+        if (!$this->nodeTypeResolver->isObjectTypes($valueArgument, PHPDateTimeTypes::all()) || !$this->nodeTypeResolver->isObjectTypes($expectationArgument, PHPDateTimeTypes::all())) {
             return false;
         }
 

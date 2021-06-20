@@ -5,7 +5,6 @@ namespace Aeon\Calendar\Rector\DateTimeImmutable;
 use Aeon\Calendar\Gregorian\TimeZone;
 use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -35,10 +34,7 @@ final class TimeZoneToAeonDateTimeZoneRector extends AbstractRector
             return null;
         }
 
-        return new New_(
-            new FullyQualified(TimeZone::class),
-            $node->args
-        );
+        return $this->nodeFactory->createStaticCall(TimeZone::class, 'fromString', $node->args);
     }
 
     /**

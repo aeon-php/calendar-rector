@@ -10,6 +10,6 @@ new \DateTimeZone('UTC');
 
 namespace Aeon\Calendar\Tests\Unit\Rector\DateTimeImmutable\FunctionArgumentToAeonDateTimeRector\Fixture;
 
-new \Aeon\Calendar\Gregorian\TimeZone('UTC');
+\Aeon\Calendar\Gregorian\TimeZone::fromString('UTC');
 
 ?>
